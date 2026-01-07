@@ -10,9 +10,12 @@ import java.util.Scanner;
 
 public class ChessPanel extends JPanel
 {
-    private static final int SIZE = 52; //must be even
-    private static final int FRAME = SIZE * 8;
-    private static final int RADIUS = SIZE/4 - 5;
+    private static int HSIZE = 52; //must be even
+    private static int VSIZE = 52;
+    private static int HFRAME = HSIZE * 8;
+    private static int VFRAME = VSIZE * 8;
+    private static int HRADIUS = HSIZE/4 - 5;
+    private static int VRADIUS = VSIZE/4 - 5;
     
     private BufferedImage myImage;
     private static Graphics myBuffer;
@@ -56,11 +59,11 @@ public class ChessPanel extends JPanel
     
     public ChessPanel()
     {
-        myImage =  new BufferedImage(FRAME, FRAME, BufferedImage.TYPE_INT_RGB);
+        myImage =  new BufferedImage(HFRAME, VFRAME, BufferedImage.TYPE_INT_RGB);
         myBuffer = myImage.getGraphics();
         
         myBuffer.setColor(Color.WHITE);
-        myBuffer.fillRect(0, 0, FRAME, FRAME);
+        myBuffer.fillRect(0, 0, HFRAME, VFRAME);
         
         board = new ArrayList<>();
         colors = new ArrayList<>();
@@ -146,23 +149,23 @@ public class ChessPanel extends JPanel
             colors.add("w");
         }
         
-        wKing = new ImageIcon("whiteking.png");
-        bKing = new ImageIcon("blackking.png");
+        wKing = new ImageIcon(getClass().getResource("/whiteking.png"));
+        bKing = new ImageIcon(getClass().getResource("/blackking.png"));
         
-        wQueen = new ImageIcon("whitequeen.png");
-        bQueen = new ImageIcon("blackqueen.png");
+        wQueen = new ImageIcon(getClass().getResource("/whitequeen.png"));
+        bQueen = new ImageIcon(getClass().getResource("/blackqueen.png"));
         
-        wBishop = new ImageIcon("whitebishop.png");
-        bBishop = new ImageIcon("blackbishop.png");
+        wBishop = new ImageIcon(getClass().getResource("/whitebishop.png"));
+        bBishop = new ImageIcon(getClass().getResource("/blackbishop.png"));
         
-        wPawn = new ImageIcon("whitepawn.png");
-        bPawn = new ImageIcon("blackpawn.png");
+        wPawn = new ImageIcon(getClass().getResource("/whitepawn.png"));
+        bPawn = new ImageIcon(getClass().getResource("/blackpawn.png"));
         
-        wKnight = new ImageIcon("whiteknight.png");
-        bKnight = new ImageIcon("blackknight.png");
+        wKnight = new ImageIcon(getClass().getResource("/whiteknight.png"));
+        bKnight = new ImageIcon(getClass().getResource("/blackknight.png"));
         
-        wRook = new ImageIcon("whiterook.png");
-        bRook = new ImageIcon("blackrook.png");
+        wRook = new ImageIcon(getClass().getResource("/whiterook.png"));
+        bRook = new ImageIcon(getClass().getResource("/blackrook.png"));
         
         
         t = new Timer(30, new Listener());
@@ -178,17 +181,25 @@ public class ChessPanel extends JPanel
         public void actionPerformed(ActionEvent e)
         {
             //resetting board and grid
+            
+            //HSIZE = getWidth() / 8;
+            //VSIZE = getHeight() / 8;
+            //HFRAME = HSIZE * 8;
+            //VFRAME = VSIZE * 8;
+            //HRADIUS = HSIZE/4 - 5;
+            //VRADIUS = VSIZE/4 - 5;
+            
             if (!done)
             {
                 myBuffer.setColor(Color.WHITE);
-                myBuffer.fillRect(0, 0, FRAME, FRAME);
+                myBuffer.fillRect(0, 0, HFRAME, VFRAME);
                
                 myBuffer.setColor(Color.BLACK);
             
                 for (int x = 0; x <= 8; x++)
                 {
-                myBuffer.drawLine(x * SIZE, 0, x * SIZE, FRAME);
-                myBuffer.drawLine(0, x * SIZE, FRAME, x * SIZE);
+                myBuffer.drawLine(x * HSIZE, 0, x * HSIZE, VFRAME);
+                myBuffer.drawLine(0, x * VSIZE, HFRAME, x * VSIZE);
                 }
             }
             
@@ -297,7 +308,7 @@ public class ChessPanel extends JPanel
     {
         if (!done)
         {
-            myBuffer.drawImage(i.getImage(), x % 8 * SIZE + 2, x / 8 * SIZE + 2, SIZE - 4, SIZE - 4, null);
+            myBuffer.drawImage(i.getImage(), x % 8 * HSIZE + 2, x / 8 * VSIZE + 2, HSIZE - 4, VSIZE - 4, null);
         }
     }
     
@@ -306,16 +317,21 @@ public class ChessPanel extends JPanel
         if (!done)
         {
             myBuffer.setColor(Color.LIGHT_GRAY);
-            int x = ind % 8 * SIZE;
-            int y = ind / 8 * SIZE;
+            int x = ind % 8 * HSIZE;
+            int y = ind / 8 * VSIZE;
             
-            myBuffer.fillOval(x + SIZE/2 - RADIUS, y + SIZE/2 - RADIUS, RADIUS * 2, RADIUS * 2);
+            myBuffer.fillOval(x + HSIZE/2 - HRADIUS, y + VSIZE/2 - VRADIUS, HRADIUS * 2, VRADIUS * 2);
         }
     }
     
-    public static int getFrame()
+    public static int getHFrame()
     {
-        return FRAME;
+        return HFRAME;
+    }
+    
+    public static int getVFrame()
+    {
+        return VFRAME;
     }
     
     public static void movePiece()
@@ -1656,12 +1672,16 @@ public class ChessPanel extends JPanel
     {
         public void mouseClicked(MouseEvent e)
         {
-            int square_x = (e.getX() - e.getX() % SIZE)/SIZE;
-            int square_y = (e.getY() - e.getY() % SIZE)/SIZE;
+            int square_x = (e.getX() - e.getX() % HSIZE)/HSIZE;
+            int square_y = (e.getY() - e.getY() % VSIZE)/VSIZE;
             int dummyindex = square_x + square_y * 8;
-            String dummyColor = colors.get(dummyindex);
+            String dummyColor = "";
+            if (dummyindex <= 63)
+            {
+                dummyColor = colors.get(dummyindex);
+            }
             
-            if (dummyColor.equals(turn) || pieceClicked)
+            if ((dummyColor.equals(turn) || pieceClicked) && dummyindex <= 63)
             {
             
             if (index == -1)
